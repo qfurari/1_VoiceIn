@@ -205,14 +205,9 @@ class VoiceIn(OpenRTM_aist.DataFlowComponentBase):
         stream.close()
         p.terminate()
  
-        wf = wave.open(output_path, 'wb')
-        wf.setnchannels(CHANNELS)
-        wf.setsampwidth(p.get_sample_size(FORMAT))
-        wf.setframerate(RATE)
-        wf.writeframes(b''.join(frames))
-        wf.close()
+        voice_data = b''.join(frames)
 
-        self._d_OutVoice.data = frames  # 音声データをデータポートにセット
+        self._d_OutVoice.data = voice_data  # 音声データをデータポートにセット
         self._OutVoiceOut.write()       # データをポートに書き込む
 
         return RTC.RTC_OK
