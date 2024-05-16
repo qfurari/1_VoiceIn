@@ -178,37 +178,47 @@ class VoiceIn(OpenRTM_aist.DataFlowComponentBase):
     def onExecute(self, ec_id):
         import pyaudio
         import wave
+        import threading
  
-        CHUNK = 2**10
-        FORMAT = pyaudio.paInt16
-        CHANNELS = 1
-        RATE = 44100
-        record_time = 5
-        output_path = "./output.wav"
-        
- 
-        p = pyaudio.PyAudio()
-        stream = p.open(format=FORMAT,
-                        channels=CHANNELS,
-                        rate=RATE,
-                        input=True,
-                        frames_per_buffer=CHUNK)
- 
-        print("Recording ...")
-        frames = []
-        for i in range(0, int(RATE / CHUNK * record_time)):
-            data = stream.read(CHUNK)
-            frames.append(data)
-        print("Done.")
- 
-        stream.stop_stream()
-        stream.close()
-        p.terminate()
- 
-        voice_data = b''.join(frames)
+        def record_audio():
+            CHUNK = 2**10
+            FORMAT = pyaudio.paInt16
+            CHANNELS = 1
+            RATE = 44100
+            record_time = 5
+            output_path = "./output.wav"
 
-        self._d_OutVoice.data = voice_data  # 音声データをデータポートにセット
-        self._OutVoiceOut.write()       # データをポートに書き込む
+            p = pyaudio.PyAudio()
+            stream = p.open(format=FORMAT,
+                            channels=CHANNELS,
+                            rate=RATE,
+                            input=True,
+                            frames_per_buffer=CHUNK)
+
+            print("Recording...")
+            frames = []
+            for i in range(0, int(RATE / CHUNK * record_time)):#ここで音声を録音
+                data = stream.read(CHUNK)
+                frames.append(data)
+
+            print("Done.")
+
+            stream.stop_stream()
+            stream.close()
+            p.terminate()
+
+            voice_data = b''.join(frames)
+
+            self._d_OutVoice.data = voice_data
+            self._OutVoiceOut.write()
+
+        def wait_for_enter():
+            while True:
+                input("Press Enter to start recording...")
+                record_audio()
+
+        if __name__ == "__main__":
+            threading.Thread(target=wait_for_enter).start()
 
         return RTC.RTC_OK
 	
