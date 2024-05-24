@@ -185,7 +185,7 @@ class VoiceIn(OpenRTM_aist.DataFlowComponentBase):
             FORMAT = pyaudio.paInt16
             CHANNELS = 1
             RATE = 44100
-            record_time = 5
+            record_time = 3
             output_path = "./output.wav"
 
             p = pyaudio.PyAudio()
@@ -208,9 +208,13 @@ class VoiceIn(OpenRTM_aist.DataFlowComponentBase):
             p.terminate()
 
             voice_data = b''.join(frames)
+            
+             # TimedOctetSeqに変換してOutPortに出力
+            timed_voice_data = RTC.TimedOctetSeq(RTC.Time(0, 0), voice_data)
+            self._OutVoiceOut.write(timed_voice_data)
 
-            self._d_OutVoice.data = voice_data
-            self._OutVoiceOut.write()
+            #self._d_OutVoice.data = voice_data
+            #self._OutVoiceOut.write()
 
         def wait_for_enter():
             while True:
