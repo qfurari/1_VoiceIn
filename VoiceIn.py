@@ -3,7 +3,7 @@
 # -*- Python -*-
 
 """
- @file Voice2in.py
+ @file VoiceIn.py
  @brief ModuleDescription
  @date $Date$
 """
@@ -20,8 +20,8 @@ import OpenRTM_aist
 sys.path.append(".")
 
 
-voice2in_spec = ["implementation_id", "Voice2in", 
-                 "type_name",         "Voice2in", 
+voice2in_spec = ["implementation_id", "VoiceIn", 
+                 "type_name",         "VoiceIn", 
                  "description",       "ModuleDescription", 
                  "version",           "1.0.0", 
                  "vendor",            "test", 
@@ -173,7 +173,7 @@ def MyModuleInit(manager):
         args = instance_name[0].replace("--", "?")
     else:
         args = ""
-    comp = manager.createComponent("Voice2in" + args)
+    comp = manager.createComponent("VoiceIn" + args)
 
 def main():
     argv = [i for i in sys.argv if not "--instance_name=" in i]
